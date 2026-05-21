@@ -1,0 +1,4 @@
+﻿  TypingServerProjiect1.cpp
+C:\Users\huangruiying\Desktop\my-little-project\TypingServerProjiect1\TypingServerProjiect1.cpp(24,15): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+C:\Users\huangruiying\Desktop\my-little-project\TypingServerProjiect1\TypingServerProjiect1.cpp(70,53): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+  TypingServerProjiect1.vcxproj -> C:\Users\huangruiying\Desktop\my-little-project\TypingServerProjiect1\x64\Debug\TypingServerProjiect1.exe

@@ -1,0 +1,3 @@
+TypingServerProjiect1使用说明：
+在VS里运行TypingServerProjiect1程序，运行的黑色窗口不可以关。
+在VS code里点左上角文件，选打开文件夹，打开my-little-project，点TypingServerProjiect1，选择打字练习.html，再点右下角的Go Live就可以打开网页了。全对并且输入完所有内容才会换题。

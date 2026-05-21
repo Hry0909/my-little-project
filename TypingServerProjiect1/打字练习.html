@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>打字练习</title>
+    <style>
+        body { 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            font-family: 微软雅黑, sans-serif;
+        }
+        .title { color: #2c3e50; text-align: center; }
+        #targetText { 
+            font-size: 24px; 
+            letter-spacing: 3px; 
+            margin: 30px 0; 
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+        #inputArea { 
+            width: 100%; 
+            height: 120px; 
+            font-size: 18px; 
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            resize: none;
+        }
+        #inputArea.correct {
+            border-color: #28a745;
+        }
+        #inputArea.incorrect {
+            border-color: #dc3545;
+        }
+        .stats {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: #f1f3f5;
+            border-radius: 8px;
+            width: 30%;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        .tip { color: #7f8c8d; text-align: center; margin-top: 20px; }
+        .success-message {
+            color: #28a745;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">打字练习</h1>
+    <div id="targetText">正在加载文本，请稍候...</div>
+    <textarea id="inputArea" placeholder="在这里输入和上方一样的内容"></textarea>
+    
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-value" id="correctCount">0</div>
+            <div class="stat-label">正确字符数</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="totalCount">0</div>
+            <div class="stat-label">总字符数</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="accuracy">0%</div>
+            <div class="stat-label">正确率</div>
+        </div>
+    </div>
+
+    <div class="success-message" id="successMsg">✅ 完成！即将加载新题目...</div>
+    <p class="tip">提示：服务器端口为 8080，请确保 C++ 服务器正在运行...</p>
+
+    <script>
+        let targetStr = '';
+        const targetEl = document.getElementById('targetText');
+        const inputEl = document.getElementById('inputArea');
+        const correctEl = document.getElementById('correctCount');
+        const totalEl = document.getElementById('totalCount');
+        const accuracyEl = document.getElementById('accuracy');
+        const successMsgEl = document.getElementById('successMsg');
+
+        // 从服务器获取新文本
+        function loadNewText() {
+            fetch('http://localhost:8080/get-text')
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('服务器响应异常');
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    targetStr = data.text;
+                    targetEl.textContent = targetStr;
+                    totalEl.textContent = targetStr.length;
+                    // 清空输入框和统计
+                    inputEl.value = '';
+                    correctEl.textContent = 0;
+                    accuracyEl.textContent = '0%';
+                    inputEl.classList.remove('correct', 'incorrect');
+                    successMsgEl.style.display = 'none';
+                })
+                .catch(function(error) {
+                    targetEl.textContent = '加载失败，请检查服务器是否运行';
+                    console.error('错误:', error);
+                });
+        }
+
+        // 页面加载时获取第一次文本
+        window.onload = loadNewText;
+
+        // 实时统计输入正确率
+        inputEl.addEventListener('input', function() {
+            const inputStr = inputEl.value;
+            let correct = 0;
+
+            // 逐字符对比
+            for (let i = 0; i < inputStr.length; i++) {
+                if (i < targetStr.length && inputStr[i] === targetStr[i]) {
+                    correct++;
+                }
+            }
+
+            // 更新统计数据
+            correctEl.textContent = correct;
+            const accuracy = targetStr.length > 0 ? Math.round((correct / targetStr.length) * 100) : 0;
+            accuracyEl.textContent = accuracy + '%';
+
+            // 输入框颜色反馈
+            if (inputStr.length === targetStr.length) {
+                if (accuracy === 100) {
+                    inputEl.classList.add('correct');
+                    inputEl.classList.remove('incorrect');
+                    // 输入完全正确，显示提示并加载新题目
+                    successMsgEl.style.display = 'block';
+                    setTimeout(loadNewText, 1500); // 1.5秒后自动加载新文本
+                } else {
+                    inputEl.classList.add('incorrect');
+                    inputEl.classList.remove('correct');
+                }
+            } else {
+                inputEl.classList.remove('correct', 'incorrect');
+            }
+        });
+    </script>
+</body>
+</html>
