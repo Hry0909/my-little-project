@@ -1,0 +1,3 @@
+﻿  snake.c
+D:\c language program\贪吃蛇项目\snaked代码\snake\snake.c(198,19): warning C4047: “<”:“void (__cdecl *)(DWORD)”与“int”的间接级别不同
+  snake.vcxproj -> D:\c language program\贪吃蛇项目\snaked代码\snake\x64\Debug\snake.exe
